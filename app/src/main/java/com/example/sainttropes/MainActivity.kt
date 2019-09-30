@@ -1,5 +1,7 @@
 package com.example.sainttropes
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.ContextMenu
@@ -63,10 +65,53 @@ class MainActivity : AppCompatActivity() {
 
     override fun onContextItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
-            R.id.sms -> return true
-            R.id.mail -> return true
-            R.id.share -> return true
-            R.id.brouse -> return true
+            R.id.sms -> {
+                val number = "999-9999-9999"
+                var intent = Intent(Intent.ACTION_VIEW)
+                val uri = Uri.parse("sms:$number")
+                intent.data = uri
+                intent.putExtra("sms_body","こんにちは")
+                if (intent.resolveActivity(packageManager) != null) {
+                    startActivity(intent)
+                }
+                return true
+            }
+            R.id.mail -> {
+                val email = "nobody@example.com"
+                val subject = "予約問い合わせ"
+                val text = "以下の通り予約希望します"
+                val uri = Uri.parse("mailto:")
+                val intent = Intent(Intent.ACTION_SENDTO)
+                intent.data = uri
+                intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+                    .putExtra(Intent.EXTRA_SUBJECT,subject)
+                    .putExtra(Intent.EXTRA_TEXT,text)
+                if (intent.resolveActivity(packageManager) != null) {
+                    startActivity(intent)
+                }
+                return true
+            }
+            R.id.share ->{
+                val text = "おいしいレストランを紹介します。"
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.type = "text/plain"
+                intent.putExtra(Intent.EXTRA_TEXT,text)
+                val chooser = Intent.createChooser(intent,null)
+                if(intent.resolveActivity(packageManager) != null){
+                    startActivity(chooser)
+                }
+                return true
+            }
+            R.id.brouse -> {
+                val url: String = "http://www.yahoo.co.jp"
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(url)
+                if(intent.resolveActivity(packageManager) != null){
+                    startActivity(intent)
+                }
+                return true
+
+            }
         }
         return super.onContextItemSelected(item)
     }
